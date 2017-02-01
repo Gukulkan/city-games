@@ -1,5 +1,7 @@
 package com.citygames;
 
+import com.citygames.entity.GameUser;
+import com.citygames.service.GameUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
@@ -11,19 +13,19 @@ import org.springframework.stereotype.Component;
 @Component
 public class SpringDataJpaUserDetailsService implements UserDetailsService {
 
-	private final ManagerRepository repository;
+    private final GameUserService gameUserService;
 
-	@Autowired
-	public SpringDataJpaUserDetailsService(ManagerRepository repository) {
-		this.repository = repository;
-	}
+    @Autowired
+    public SpringDataJpaUserDetailsService(GameUserService gameUserService) {
+        this.gameUserService = gameUserService;
+    }
 
-	@Override
-	public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
-		Manager manager = this.repository.findByName(name);
-		return new User(manager.getName(), manager.getPassword(),
-				AuthorityUtils.createAuthorityList(manager.getRoles()));
-	}
+    @Override
+    public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
+        GameUser gameUser = this.gameUserService.getByName(name);
+        return new User(gameUser.getName(), gameUser.getPassword(),
+                AuthorityUtils.createAuthorityList(gameUser.getRoles()));
+    }
 
 }
 

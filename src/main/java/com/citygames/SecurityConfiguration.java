@@ -1,5 +1,6 @@
 package com.citygames;
 
+import com.citygames.entity.GameUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -20,17 +21,18 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth
 			.userDetailsService(this.userDetailsService)
-				.passwordEncoder(Manager.PASSWORD_ENCODER);
+				.passwordEncoder(GameUser.PASSWORD_ENCODER);
 	}
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http
 			.authorizeRequests()
-				.antMatchers("/built/**", "/main.css").permitAll()
+				.antMatchers("/built/**", "/css/**", "/fonts/**", "/custom-js/**", "/public/**").permitAll()
 				.anyRequest().authenticated()
 				.and()
 			.formLogin()
+				.loginPage("/login")
 				.defaultSuccessUrl("/", true)
 				.permitAll()
 				.and()
@@ -38,7 +40,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.and()
 			.csrf().disable()
 			.logout()
-				.logoutSuccessUrl("/");
+				.logoutSuccessUrl("/login?logout");
 	}
 
 }

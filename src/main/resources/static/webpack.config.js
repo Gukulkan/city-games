@@ -1,6 +1,8 @@
 var path = require('path');
+var webpack = require('webpack');
 
 var node_dir = __dirname + '/node_modules';
+var APP_DIR = path.resolve(__dirname, '/');
 
 module.exports = {
     entry: './main.js',
@@ -22,7 +24,25 @@ module.exports = {
                 test: path.join(__dirname, '.'),
                 exclude: /(node_modules)/,
                 loader: 'babel-loader'
+            },
+            {
+                test : /\.jsx?/,
+                include : APP_DIR,
+                loader : 'babel',
+                query:
+                    {
+                        presets:['react', "es2015"]
+                    }
             }
         ]
-    }
+    },
+    plugins: [
+        new webpack.ProvidePlugin({
+            $: "jquery",
+            jQuery: "jquery"
+        }),
+        new webpack.DefinePlugin({
+            "require.specified": "require.resolve"
+        })
+    ]
 };
